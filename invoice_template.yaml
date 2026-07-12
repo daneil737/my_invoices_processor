@@ -1,3 +1,10 @@
 issuer: SuperStore
 keywords:
   - SuperStore
+fields:
+  invoice_number: INVOICE
+  date: Date: (\D{3}\s\d{2}\s\d{4})
+  amount: Total
+  order_id: Terms
+options:
+  currency: USD
