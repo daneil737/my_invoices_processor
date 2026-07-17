@@ -4,6 +4,7 @@ keywords:
 fields:
   invoice_number: '[#]\s\d{5}'
   date: '\D{3}\s\d{2}\s\d{4}'
-  amount: 'Total:\s+(\$)([\d]+,[\d]+\.\d{2})'
+  amount: 'Total:\s+\$([\d]+,[\d]+\.\d{2})'
 options:
   currency: USD
+  #decimal_separator: "."
