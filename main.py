@@ -1,9 +1,8 @@
 #!/usr/bin/python3
 
 import os
-from invoice2data import extract_data
-from invoice2data.extract.loader import read_templates
-from invoice2data.input import pdftotext
+import re
+import pdftotext
 
 
 def read_document(filename: str) -> list[str]:
@@ -24,13 +23,15 @@ def generate_summary():
 
 def main():
 
+	with open("invoices/invoice_Frank Carlisle_49474.pdf", "rb") as invoice_file:
+		invoice_text = pdftotext.PDF(invoice_file)
+	invoice_number = re.search("[#]\\s\\d{5}", invoice_text[0])
+	invoice_date = re.search("\\D{3}\\s\\d{2}\\s\\d{4}", invoice_text[0])
+	invoice_total_amount = re.search("Total:\\s+\\$([\\d]+,[\\d]+\\.\\d{2})", invoice_text[0])
 
-	templates = read_templates("./templates")
-	data = extract_data("invoices/invoice_Frank Carlisle_49474.pdf", 
-		templates=templates,
-		input_reader=pdftotext)
-	print(data)
-
+	print(invoice_number.group())
+	print(invoice_date.group())
+	print(invoice_total_amount.group())
 
 
 if __name__ == '__main__':
