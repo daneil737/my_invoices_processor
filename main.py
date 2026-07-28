@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 
-import invoice2data
+import os
+from invoice2data import extract_data
+from invoice2data.extract.loader import read_templates
+from invoice2data.input import pdftotext
 
 
 def read_document(filename: str) -> list[str]:
@@ -20,9 +23,13 @@ def generate_summary():
 
 
 def main():
-	data = invoice2data.extract_data("invoices/invoice_Frank Carlisle_49474.pdf")
-	print(data)
 
+
+	templates = read_templates("./templates")
+	data = extract_data("invoices/invoice_Frank Carlisle_49474.pdf", 
+		templates=templates,
+		input_reader=pdftotext)
+	print(data)
 
 
 
