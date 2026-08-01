@@ -41,15 +41,20 @@ def process_date(date: str) -> str:
 	return f"{day}.{month_names[month]}.{year}"
 
 
-def generate_summary(invoice_data: dict) -> str:
-	print(f"{invoice_data['invoice_number']},{invoice_data['invoice_date']},{invoice_data['invoice_total_amount']}")
-	
+def generate_invoice_summary(invoice_data: dict) -> str:
+	return f"{invoice_data['invoice_number']},{invoice_data['invoice_date']},{invoice_data['invoice_total_amount']}"
+
+
+def generate_csv_summary():
+	for invoice_file in os.listdir("./invoices"):
+		invoice_text = read_document_to_pdf(f"./invoices/{invoice_file}")
+		invoice_data = split_data(invoice_text)
+		print(generate_invoice_summary(invoice_data))
 
 
 def main():
-	invoice_text = read_document_to_pdf("invoices/invoice_Frank Carlisle_49474.pdf")
-	invoice_data = split_data(invoice_text)
-	generate_summary(invoice_data)
+	# invoice_text = read_document_to_pdf("invoices/invoice_Frank Carlisle_49474.pdf")
+	generate_csv_summary()	
 
 
 if __name__ == '__main__':
