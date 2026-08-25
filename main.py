@@ -3,12 +3,22 @@
 import os
 import re
 import pdftotext
+import logging
+from datetime import datetime
+
+
+def start_logging():
+	logger = logging.getLogger(__name__)
+	time = datetime.now().strftime("%d.%m.%y_%H:%M")
+	logging.basicConfig(filename=f'invoice_processor_{time}.log', level=logging.INFO)
+	logger.info('Logging started')
+	return logger
 
 
 def read_document_to_pdf(filename: str) -> str:
 	with open(filename, "rb") as invoice_file:
 		invoice_text = pdftotext.PDF(invoice_file)
-
+	invoice_processor_logger.info(f"invoice file {filename} loaded successfully")
 	return invoice_text
 
 def split_data(invoice_text: str) -> dict:
@@ -18,16 +28,19 @@ def split_data(invoice_text: str) -> dict:
 	try:
 		invoice_number = invoice_number.group().replace(" ", "")
 	except AttributeError:
+		invoice_processor_logger.error("Script didn not manage to read invoice number")
 		invoice_number = ""
 
 	try:
 		invoice_date = process_date(invoice_date.group())
 	except AttributeError:
+		invoice_processor_logger.error("Script didn not manage to read invoice date")
 		invoice_date = ""
 
 	try:
 		invoice_total_amount = invoice_total_amount.group().split("$")[-1].replace(",", "")
 	except AttributeError:
+		invoice_processor_logger.error("Script didn not manage to read total amount")
 		invoice_total_amount = ""
 	
 	return {
@@ -70,6 +83,8 @@ def generate_csv_summary():
 
 
 def main():
+	global invoice_processor_logger
+	invoice_processor_logger = start_logging()
 	# invoice_text = read_document_to_pdf("invoices/invoice_Frank Carlisle_49474.pdf")
 	generate_csv_summary()
 
