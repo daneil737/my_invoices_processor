@@ -23,24 +23,25 @@ def read_document_to_pdf(filename: str) -> str:
 
 def split_data(invoice_text: str) -> dict:
 	invoice_number = re.search("[#]\\s\\d{4,5}", invoice_text[0])
-	invoice_date = re.search("\\D{3}\\s\\d{2}\\s\\d{4}", invoice_text[0])
+	invoice_date = re.search("\\D{3}\\s\\d{1,2},?\\s\\d{4}", invoice_text[0])
 	invoice_total_amount = re.search("Total:\\s+\\$([\\d]*,?[\\d]+\\.\\d{2})", invoice_text[0])
+	
 	try:
 		invoice_number = invoice_number.group().replace(" ", "")
 	except AttributeError:
-		invoice_processor_logger.error("Script didn not manage to read invoice number")
+		invoice_processor_logger.error("Script did not manage to read invoice number")
 		invoice_number = ""
 
 	try:
 		invoice_date = process_date(invoice_date.group())
 	except AttributeError:
-		invoice_processor_logger.error("Script didn not manage to read invoice date")
+		invoice_processor_logger.error("Script did not manage to read invoice date")
 		invoice_date = ""
 
 	try:
 		invoice_total_amount = invoice_total_amount.group().split("$")[-1].replace(",", "")
 	except AttributeError:
-		invoice_processor_logger.error("Script didn not manage to read total amount")
+		invoice_processor_logger.error("Script did not manage to read total amount")
 		invoice_total_amount = ""
 	
 	return {
@@ -73,7 +74,7 @@ def generate_invoice_summary(invoice_data: dict) -> str:
 	return f"{invoice_data['invoice_number']},{invoice_data['invoice_date']},{invoice_data['invoice_total_amount']}"
 
 
-def generate_csv_summary():
+def create_invoices_repport():
 	with open("output.csv", "w") as invoice_summary_file:
 		invoice_summary_file.write("invoice number, invoice data, invoice total amount\n")
 		for invoice_file in os.listdir("./invoices"):
@@ -85,8 +86,7 @@ def generate_csv_summary():
 def main():
 	global invoice_processor_logger
 	invoice_processor_logger = start_logging()
-	# invoice_text = read_document_to_pdf("invoices/invoice_Frank Carlisle_49474.pdf")
-	generate_csv_summary()
+	create_invoices_repport()
 
 
 if __name__ == '__main__':
